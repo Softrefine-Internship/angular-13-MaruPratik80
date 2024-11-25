@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { CdkDrag, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { map, timer } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -6,24 +8,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  time = new Date();
-  onDropp(event: any) {
-    console.log(event);
-  }
-  onDrop(event: DragEvent) {
-    console.log(event);
-    event.dataTransfer;
-  }
+  time = timer(0, 1000).pipe(map(() => new Date()));
 
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
-
-    console.log(event);
-  }
-
-  onDragStart(event: DragEvent) {
-    if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
-    console.log(event);
-  }
+  constructor() {}
 }
