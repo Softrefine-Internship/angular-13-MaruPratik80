@@ -1,26 +1,35 @@
-import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostBinding,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { DragService } from './drag.service';
 
 @Directive({
   selector: '[appDraggable]',
 })
 export class DraggableDirective {
-  constructor(private elementRef: ElementRef, private renderer: Renderer2, private dragService: DragService) {
-    this.renderer.setProperty(this.elementRef.nativeElement, 'draggable', true);
-    this.renderer.addClass(this.elementRef.nativeElement, 'app-draggable');
-  }
+  @Input({ required: true }) type!: string;
+
+  @HostBinding('draggable') draggable = true;
+  @HostBinding('style.cursor') cursor = 'move';
+
+  constructor(private elementRef: ElementRef, private dragService: DragService) {}
 
   @HostListener('dragstart', ['$event']) onDragStart(event: DragEvent) {
-    this.dragService.tile = this.elementRef;
-    console.log(event);
-    const { x, y } = (event.target as HTMLElement).getBoundingClientRect();
-    const offsetX = event.clientX - x;
-    const offsetY = event.clientY - y;
-    event.dataTransfer?.setData('text/plain', `${offsetX} ${offsetY}`);
+    this.dragService.tileRect = this.elementRef.nativeElement.getBoundingClientRect();
+    this.dragService.dragStart(event, this.type);
   }
 
   @HostListener('dragend', ['$event']) onDragEnd(event: DragEvent) {
-    console.log(event);
-    console.dir(this.elementRef.nativeElement);
+    if (this.dragService.isAllowOnceTileDropped()) {
+      this.draggable = false;
+      this.cursor = 'not-allowed';
+    }
   }
 }

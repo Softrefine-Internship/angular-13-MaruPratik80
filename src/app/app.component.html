@@ -1,81 +1,63 @@
 <div class="container">
   <div class="left">
     <h2>Screen</h2>
-    <div class="screen" appDroppable></div>
-    <!-- <div
-      class="screen"
-      cdkDropList
-      #screenRef="cdkDropList"
-      [cdkDropListData]="screen"
-      (cdkDropListDropped)="drop($event)"
-    >
-      <div
-        class="tile"
-        *ngFor="let item of screen"
-        cdkDrag
-        cdkDragBoundary=".screen"
-        [style.top.px]="item.y"
-        [style.left.px]="item.x"
-        [style.z-index]="item.zIndex"
-      >
-        {{ item.type }}
+    <div class="screen">
+      <div class="screen__dropzone" appDroppable>
+        <div
+          class="tile"
+          *ngFor="let tile of screen"
+          cdkDrag
+          cdkDragBoundary=".screen__dropzone"
+          (cdkDragStarted)="changeZIndex(tile)"
+          [style.top.px]="tile.y"
+          [style.left.px]="tile.x"
+          [style.z-index]="tile.zIndex"
+        >
+          <ng-container *ngTemplateOutlet="tileTemplate; context: { $implicit: tile }"></ng-container>
+        </div>
       </div>
-    </div> -->
+    </div>
   </div>
 
   <div class="right">
     <h2>Tile Options</h2>
-    <!-- <div
-      class="tile-options"
-      cdkDropList
-      [cdkDropListConnectedTo]="[screenRef]"
-      [cdkDropListData]="tileOptions"
-      cdkDropListSortingDisabled
-      (cdkDropListDropped)="drop($event)"
-    >
-      <div
-        class="tile"
-        *ngFor="let item of tileOptions"
-        cdkDrag
-        (mousedown)="off = { x: $event.offsetX || 0, y: $event.offsetY || 0 }"
-        [cdkDragData]="item"
-        (cdkDragMoved)="moved($event)"
-      >
-        <div class="tile" *cdkDragPlaceholder>
-          {{ item.type }}
-        </div>
-        {{ item.type }}
-      </div>
-      </div> -->
     <div class="tile-options">
-      <div class="tile" appDraggable>
-        <mat-form-field subscriptSizing="dynamic">
-          <mat-label>Text box</mat-label>
-          <input matInput type="text" />
-        </mat-form-field>
-      </div>
-
-      <div class="tile" appDraggable>
-        <img src="../assets/image.jpeg" alt="image" class="image" />
-      </div>
-
-      <div class="tile" appDraggable>
-        <div class="clock">
-          {{ time | async | date : 'mediumTime' }}
-        </div>
-      </div>
-
-      <div class="tile" appDraggable>
-        <mat-form-field subscriptSizing="dynamic">
-          <mat-label>Dropdown</mat-label>
-          <mat-select>
-            <mat-option>None</mat-option>
-            <mat-option value="Option-1">Option 1</mat-option>
-            <mat-option value="Option-2">Option 2</mat-option>
-            <mat-option value="Option-3">Option 3</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <div class="tile" *ngFor="let tile of tileOptions" appDraggable [type]="tile.type">
+        <ng-container *ngTemplateOutlet="tileTemplate; context: { $implicit: tile }"></ng-container>
       </div>
     </div>
   </div>
 </div>
+
+<ng-template #tileTemplate let-tile>
+  <ng-container *ngIf="tile.type === 'textbox'">
+    <h2 class="tile__title">Input Field</h2>
+    <mat-form-field subscriptSizing="dynamic" class="form-field">
+      <mat-label>Text box</mat-label>
+      <input matInput type="text" />
+    </mat-form-field>
+  </ng-container>
+
+  <ng-container *ngIf="tile.type === 'image'">
+    <!-- <h2 class="tile__title">Image</h2> -->
+    <img src="../assets/image.jpg" alt="image" draggable="false" class="image" />
+  </ng-container>
+
+  <ng-container *ngIf="tile.type === 'clock'">
+    <h2 class="tile__title">Clock</h2>
+    <p class="clock">{{ time | async | date : 'mediumTime' }}</p>
+  </ng-container>
+
+  <ng-container *ngIf="tile.type === 'dropdown'">
+    <h2 class="tile__title">Dropdown</h2>
+    <mat-form-field subscriptSizing="dynamic" class="form-field">
+      <mat-label>Dropdown</mat-label>
+      <mat-select>
+        <mat-option>None</mat-option>
+        <mat-option value="Option-1">Option 1</mat-option>
+        <mat-option value="Option-2">Option 2</mat-option>
+        <mat-option value="Option-3">Option 3</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
+</ng-template>
