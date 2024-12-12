@@ -23,14 +23,6 @@ export class DragService {
     return this.allowOnceTypes.some(type => this.droppedTileType === type);
   }
 
-  dragStart(event: DragEvent, type: string) {
-    this.offset = {
-      left: event.clientX - this.tileRect.x,
-      top: event.clientY - this.tileRect.y,
-    };
-    event.dataTransfer?.setData('text/plain', type);
-  }
-
   drop(event: DragEvent) {
     const tile: Tile = {
       type: event.dataTransfer?.getData('text/plain') as string,
@@ -44,7 +36,8 @@ export class DragService {
 
   dragOver(event: DragEvent) {
     if (!event.dataTransfer) return;
-    this.calcDropPosition(event);
+    this.dropPos.x = event.x - this.dropZoneRect.x - this.offset.left;
+    this.dropPos.y = event.y - this.dropZoneRect.y - this.offset.top;
 
     const out =
       this.dropPos.x < 0 ||
@@ -53,10 +46,5 @@ export class DragService {
       this.dropPos.y > this.dropZoneRect.height - this.tileRect.height;
 
     event.dataTransfer.dropEffect = out ? 'none' : 'copy';
-  }
-
-  calcDropPosition(event: DragEvent) {
-    this.dropPos.x = event.x - this.dropZoneRect.x - this.offset.left;
-    this.dropPos.y = event.y - this.dropZoneRect.y - this.offset.top;
   }
 }

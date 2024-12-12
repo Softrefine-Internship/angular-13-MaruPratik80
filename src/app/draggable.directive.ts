@@ -22,8 +22,13 @@ export class DraggableDirective {
   constructor(private elementRef: ElementRef, private dragService: DragService) {}
 
   @HostListener('dragstart', ['$event']) onDragStart(event: DragEvent) {
-    this.dragService.tileRect = this.elementRef.nativeElement.getBoundingClientRect();
-    this.dragService.dragStart(event, this.type);
+    const tileRect = this.elementRef.nativeElement.getBoundingClientRect();
+    this.dragService.tileRect = tileRect;
+    this.dragService.offset = {
+      left: event.clientX - tileRect.x,
+      top: event.clientY - tileRect.y,
+    };
+    event.dataTransfer?.setData('text/plain', this.type);
   }
 
   @HostListener('dragend', ['$event']) onDragEnd(event: DragEvent) {

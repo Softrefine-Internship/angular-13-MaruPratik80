@@ -4,15 +4,12 @@ import { DragService } from './drag.service';
 @Directive({
   selector: '[appDroppable]',
 })
-export class DroppableDirective implements OnInit {
+export class DroppableDirective {
   constructor(private elementRef: ElementRef, private dragService: DragService) {}
-
-  ngOnInit(): void {
-    this.dragService.dropZoneRect = this.elementRef.nativeElement.getBoundingClientRect();
-  }
 
   @HostListener('dragenter', ['$event']) onDragEnter(event: DragEvent) {
     event.preventDefault();
+    this.dragService.dropZoneRect = this.elementRef.nativeElement.getBoundingClientRect();
   }
 
   @HostListener('dragover', ['$event']) onDragOver(event: DragEvent) {

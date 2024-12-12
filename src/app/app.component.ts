@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { map, timer } from 'rxjs';
 import { DragService } from './drag.service';
 import { Tile } from './tile.model';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-root',
@@ -23,5 +24,6 @@ export class AppComponent implements OnInit {
 
   changeZIndex(draggedTile: any) {
     this.screen.forEach(tile => (tile.zIndex = tile === draggedTile ? 1 : 0));
+    this.screen = this.screen.sort((a, b) => (a.zIndex > b.zIndex ? 1 : a.zIndex < b.zIndex ? -1 : 0));
   }
 }
